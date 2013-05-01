@@ -1,0 +1,23 @@
+<project name="nutch-extractor" default="extract">
+
+	<property name="root" value="." />
+	<property name="lib.path" value="${root}/lib" />
+	<property name="dist.path" value="${root}/dist" />
+	<property name="resource.path" value="${root}/resources" />
+
+	<path id="classpath">
+		<fileset dir="${lib.path}" includes="**/*.*">
+		</fileset>
+		<fileset dir="${dist.path}" includes="**/*.*">
+		</fileset>
+		<path path="${resource.path}">
+		</path>
+	</path>
+
+	<target name="extract">
+		<java classpathref="classpath" classname="extractor.NutchExtractor" fork="true">
+			<arg value="${segment}" />
+			<arg value="${outdir}" />
+		</java>
+	</target>
+</project>
