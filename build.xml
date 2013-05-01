@@ -1,0 +1,58 @@
+<project name="nutch-extractor" default="dist">
+
+	<property name="product.name" value="nutch-extractor" />
+
+	<property name="root" value="." />
+	<property name="source.path" value="${root}/src" />
+	<property name="source.test.path" value="${root}/src/test" />
+	<property name="lib.path" value="${root}/lib" />
+	<property name="work.path" value="${root}/work" />
+	<property name="dist.path" value="${root}/dist" />
+	<property name="resource.path" value="${root}/resources" />
+	<property name="reports.tests" value="${root}/test_report" />
+	<property name="module.version" value="1.0" />
+
+	<path id="classpath">
+		<fileset dir="${lib.path}" includes="**/*.*">
+		</fileset>
+	</path>
+
+	<target name="dist" depends="compile">
+		<jar basedir="${work.path}" destfile="${dist.path}/${product.name}-${module.version}.jar" />
+	</target>
+
+	<target name="dist-complete" depends="run-test">
+		<jar basedir="${work.path}" destfile="${dist.path}/${product.name}-${module.version}.jar" />
+	</target>
+
+	<target name="compile" depends="init">
+		<javac debug="true" classpathref="classpath" srcdir="${source.path}" destdir="${work.path}" />
+		<rmic classpathref="classpath" includes="**/stub/*.class" excludes="**/*$*.class" base="${work.path}" />
+	</target>
+
+	<target name="init">
+		<delete dir="${work.path}" includeemptydirs="true" includes="**/**" />
+		<delete dir="${dist.path}" includeemptydirs="true" includes="**/**" />
+		<delete dir="${reports.tests}" includeemptydirs="true" includes="**/**" />
+
+		<mkdir dir="${source.path}" />
+		<mkdir dir="${lib.path}" />
+		<mkdir dir="${work.path}" />
+		<mkdir dir="${dist.path}" />
+		<mkdir dir="${reports.tests}" />
+	</target>
+
+	<target name="run-test" depends="init, compile">
+		<junit printsummary="yes" fork="yes" haltonfailure="yes">
+			<classpath refid="classpath" />
+			<classpath location="${work.path}" />
+
+			<formatter type="plain" />
+			<batchtest fork="yes" todir="${reports.tests}" >
+				<fileset dir="${source.test.path}">
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+</project>
